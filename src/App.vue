@@ -10,7 +10,7 @@
     <div id="menu">
       <div id="options">
         <div class="option" @click="content = 'home'">{{ dict["home"] }}</div>
-        <div class="option">{{ dict["guilds"] }}</div>
+        <div class="option" @click="content = 'guilds'">{{ dict["guilds"] }}</div>
         <div class="option">{{ dict["bot"] }}</div>
         <div class="option">{{ dict["contact"] }}</div>
         <div class="option">{{ dict["download"] }}</div>
@@ -22,18 +22,23 @@
 
     <div class="content">
       <Home v-if="content == 'home'"></Home>
+      <Guilds v-if="content == 'guilds'"></Guilds>
     </div>
-    <div clas="end"></div>
+    <div class="end">
+      <p>xiao xigua</p>
+    </div>
   </div>
 </template>
 
 <script>
 import Languagepack from "./assets/Languagepack.json";
 import Home from "./components/home.vue";
+import Guilds from "./components/guilds.vue";
 export default {
   name: "app",
   components: {
     Home: Home,
+    Guilds: Guilds,
   },
   data() {
     return {
@@ -63,7 +68,6 @@ html,
   width: 100%;
   height: 100%;
   margin: 0px;
-  min-width: 630px;
 }
 #header {
   width: 100%;
@@ -111,8 +115,16 @@ html,
   display: inline;
   margin-left: 20px;
 }
-.content {
-  min-height: 620px;
+/* .content {
+  min-height: 78.9vh;
+} */
+.end {
+  position: absolute;
+  bottom: 0px;
+  height: 70px;
+  width: 100%;
+  background-color: rgb(43, 42, 42);
+  text-align: center;
 }
 @media only screen and (max-width: 630px) {
   .option {
