@@ -9,7 +9,7 @@
     </div>
     <div id="menu">
       <div id="options">
-        <div class="option">{{ dict["home"] }}</div>
+        <div class="option" @click="content = 'home'">{{ dict["home"] }}</div>
         <div class="option">{{ dict["guilds"] }}</div>
         <div class="option">{{ dict["bot"] }}</div>
         <div class="option">{{ dict["contact"] }}</div>
@@ -20,14 +20,21 @@
       </div>
     </div>
 
-    <div></div>
+    <div class="content">
+      <Home v-if="content == 'home'"></Home>
+    </div>
+    <div clas="end"></div>
   </div>
 </template>
 
 <script>
 import Languagepack from "./assets/Languagepack.json";
+import Home from "./components/home.vue";
 export default {
   name: "app",
+  components: {
+    Home: Home,
+  },
   data() {
     return {
       Language: "Ch",
@@ -35,6 +42,7 @@ export default {
       dict: Languagepack[Languagepack["Preset"]],
       Languagelist: Languagepack["LanguageList"],
       login: false,
+      content: "home",
     };
   },
   methods: {
@@ -102,6 +110,9 @@ html,
 #options {
   display: inline;
   margin-left: 20px;
+}
+.content {
+  min-height: 620px;
 }
 @media only screen and (max-width: 630px) {
   .option {
