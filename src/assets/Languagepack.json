@@ -1,13 +1,13 @@
 {
     "Preset": "Ch",
     "LanguageList": ["En", "Ch"],
-    "En": {
+    "Ch": {
         "title": "PIKACORD",
         "login": "Log in",
         "home": "Home",
         "guilds": "Servers"
     },
-    "Ch": {
+    "En": {
         "title": "皮卡丘機器人",
         "login": "登入",
         "home": "主頁",

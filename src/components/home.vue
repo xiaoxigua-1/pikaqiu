@@ -48,7 +48,6 @@ export default {
   props: {
     dict: {},
   },
-  beforeMount() {},
 };
 </script>
 

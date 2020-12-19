@@ -10,10 +10,12 @@
     <div id="menu">
       <div id="options">
         <div class="option" @click="content = 'home'">{{ dict["home"] }}</div>
-        <div class="option" @click="content = 'guilds'">{{ dict["guilds"] }}</div>
+        <div class="option" v-if="login" @click="content = 'guilds'">
+          {{ dict["guilds"] }}
+        </div>
         <div class="option">{{ dict["bot"] }}</div>
         <div class="option">{{ dict["contact"] }}</div>
-        <div class="option">{{ dict["download"] }}</div>
+        <div class="option" @click="content = 'download'">{{ dict["download"] }}</div>
       </div>
       <div id="login">
         <div v-if="!login">{{ dict["login"] }}</div>
@@ -21,8 +23,9 @@
     </div>
 
     <div class="content">
-      <Home v-if="content == 'home'" :dict="dict"></Home>
-      <Guilds v-if="content == 'guilds'"></Guilds>
+      <Home v-if="content === 'home'" :dict="dict"></Home>
+      <Guilds v-if="content === 'guilds'"></Guilds>
+      <Download v-if="content === 'download'"></Download>
     </div>
     <div class="end">
       <p>xiao xigua</p>
@@ -34,15 +37,17 @@
 import Languagepack from "./assets/Languagepack.json";
 import Home from "./components/home.vue";
 import Guilds from "./components/guilds.vue";
+import Download from "./components/download.vue";
 export default {
   name: "app",
   components: {
     Home: Home,
     Guilds: Guilds,
+    Download: Download,
   },
   data() {
     return {
-      Language: "Ch",
+      Language: "Eh",
       Languagepack: Languagepack,
       dict: Languagepack[Languagepack["Preset"]],
       Languagelist: Languagepack["LanguageList"],
