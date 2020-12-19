@@ -4,7 +4,7 @@
       <br />
       <span>
         <div @click="languageSwitch()" id="language">{{ Language }}</div>
-        <div id="title">PIKACORD(皮卡丘機器人(中文))</div>
+        <div id="title">{{ dict["title"] }}</div>
       </span>
     </div>
     <div id="menu">
@@ -21,7 +21,7 @@
     </div>
 
     <div class="content">
-      <Home v-if="content == 'home'"></Home>
+      <Home v-if="content == 'home'" :dict="dict"></Home>
       <Guilds v-if="content == 'guilds'"></Guilds>
     </div>
     <div class="end">
@@ -115,9 +115,15 @@ html,
   display: inline;
   margin-left: 20px;
 }
-/* .content {
-  min-height: 78.9vh;
-} */
+.content {
+  width: 100%;
+  position: absolute;
+  top: 140px;
+  bottom: 70px;
+  background-image: url("./assets/wallpaper.jpg");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
 .end {
   position: absolute;
   bottom: 0px;
@@ -137,6 +143,9 @@ html,
   #header {
     height: 70px;
   }
+  .content {
+    top: 110px;
+  }
 }
 @media only screen and (max-width: 540px) {
   .option {
@@ -150,6 +159,9 @@ html,
   }
   #login {
     margin-top: 5px;
+  }
+  .content {
+    top: 100px;
   }
 }
 </style>
