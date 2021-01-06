@@ -18,18 +18,19 @@
         <div class="option" @click="content = 'download'">{{ dict["download"] }}</div>
       </div>
       <div id="login">
-        <div v-if="!login">{{ dict["login"] }}</div>
+        <div v-if="!login" @click="Login()">{{ dict["login"] }}</div>
+        <div v-else @click="Login()">{{ dict["logout"] }}</div>
       </div>
     </div>
 
     <div class="content">
       <Home v-if="content === 'home'" :dict="dict"></Home>
-      <Guilds v-if="content === 'guilds'"></Guilds>
+      <Guilds v-if="content === 'guilds'" :token="token" :login="login"></Guilds>
       <Download v-if="content === 'download'"></Download>
     </div>
-    <div class="end">
+    <!-- <div class="end">
       <p>xiao xigua</p>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -47,12 +48,13 @@ export default {
   },
   data() {
     return {
-      Language: "Eh",
+      Language: "En",
       Languagepack: Languagepack,
       dict: Languagepack[Languagepack["Preset"]],
       Languagelist: Languagepack["LanguageList"],
       login: false,
       content: "home",
+      token: "",
     };
   },
   methods: {
@@ -61,7 +63,41 @@ export default {
       if (this.Languagepack[this.Languagelist[number]] === undefined) number = 0;
       this.dict = this.Languagepack[this.Languagelist[number]];
       this.Language = this.Languagelist[number];
+      console.log("sss", document.cookie);
     },
+    Login: function () {
+      if (this.login) {
+        this.login = false;
+        document.cookie = "usertoken=null";
+      } else {
+        document.location.href =
+          "https://discord.com/oauth2/authorize?client_id=694322652625633423&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauthorize&response_type=code&scope=identify%20email%20guilds";
+      }
+    },
+  },
+  mounted() {
+    let data = document.cookie.split(";");
+    console.log(document.cookie);
+    for (let i of data) {
+      if (RegExp("usertoken").test(i.split("=")[0])) {
+        if (i.split("=")[1] !== "null") {
+          this.login = true;
+          this.token = i.split("=")[1];
+          fetch("http://127.0.0.1:3000/api/log-in", {
+            headers: {
+              token: this.token,
+            },
+            mode: "cors",
+          })
+            .then((req) => {
+              return req.json();
+            })
+            .then((json) => {
+              console.log(json);
+            });
+        }
+      }
+    }
   },
 };
 </script>
@@ -70,6 +106,7 @@ export default {
 body,
 html,
 #app {
+  overflow-x: visible;
   width: 100%;
   height: 100%;
   margin: 0px;
@@ -124,7 +161,7 @@ html,
   width: 100%;
   position: absolute;
   top: 140px;
-  bottom: 70px;
+  bottom: 0px;
   background-image: url("./assets/wallpaper.jpg");
   background-repeat: no-repeat;
   background-size: 100% 100%;
