@@ -13,24 +13,28 @@
         <div class="option" v-if="login" @click="content = 'guilds'">
           {{ dict["guilds"] }}
         </div>
-        <div class="option">{{ dict["bot"] }}</div>
+        <div class="option" @click="content = 'status'">{{ dict["bot"] }}</div>
         <div class="option">{{ dict["contact"] }}</div>
         <div class="option" @click="content = 'download'">{{ dict["download"] }}</div>
       </div>
+
       <div id="login">
-        <div v-if="!login" @click="Login()">{{ dict["login"] }}</div>
-        <div v-else @click="Login()">{{ dict["logout"] }}</div>
+        <div v-if="!login" @click="Login()" class="login">{{ dict["login"] }}</div>
+        <div v-else @click="Login()" class="login">{{ dict["logout"] }}</div>
       </div>
     </div>
 
     <div class="content">
       <Home v-if="content === 'home'" :dict="dict"></Home>
-      <Guilds v-if="content === 'guilds'" :token="token" :login="login"></Guilds>
-      <Download v-if="content === 'download'"></Download>
+      <Guilds
+        v-if="content === 'guilds'"
+        :token="token"
+        :login="login"
+        :dict="dict"
+      ></Guilds>
+      <Download v-if="content === 'download'" :dict="dict"></Download>
+      <Status v-if="content === 'status'" :dict="dict"></Status>
     </div>
-    <!-- <div class="end">
-      <p>xiao xigua</p>
-    </div> -->
   </div>
 </template>
 
@@ -39,12 +43,14 @@ import Languagepack from "./assets/Languagepack.json";
 import Home from "./components/home.vue";
 import Guilds from "./components/guilds.vue";
 import Download from "./components/download.vue";
+import Status from "./components/status.vue";
 export default {
   name: "app",
   components: {
     Home: Home,
     Guilds: Guilds,
     Download: Download,
+    Status: Status,
   },
   data() {
     return {
@@ -63,12 +69,12 @@ export default {
       if (this.Languagepack[this.Languagelist[number]] === undefined) number = 0;
       this.dict = this.Languagepack[this.Languagelist[number]];
       this.Language = this.Languagelist[number];
-      console.log("sss", document.cookie);
     },
     Login: function () {
       if (this.login) {
         this.login = false;
         document.cookie = "usertoken=null";
+        this.content = "home";
       } else {
         document.location.href =
           "https://discord.com/oauth2/authorize?client_id=694322652625633423&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauthorize&response_type=code&scope=identify%20email%20guilds";
@@ -76,28 +82,39 @@ export default {
     },
   },
   mounted() {
+    let x = ["home", "guilds", "download"];
     let data = document.cookie.split(";");
-    console.log(document.cookie);
-    for (let i of data) {
-      if (RegExp("usertoken").test(i.split("=")[0])) {
-        if (i.split("=")[1] !== "null") {
-          this.login = true;
-          this.token = i.split("=")[1];
-          fetch("http://127.0.0.1:3000/api/log-in", {
-            headers: {
-              token: this.token,
-            },
-            mode: "cors",
-          })
-            .then((req) => {
+    (async () => {
+      for (let i of data) {
+        if (RegExp("usertoken").test(i.split("=")[0])) {
+          if (i.split("=")[1] !== "null") {
+            this.token = i.split("=")[1];
+            let json = await fetch("http://127.0.0.1:3000/api/log-in", {
+              headers: {
+                token: this.token,
+              },
+              mode: "cors",
+            }).then((req) => {
               return req.json();
-            })
-            .then((json) => {
-              console.log(json);
             });
+            this.login = true;
+            console.log(json);
+          }
         }
       }
-    }
+      if (
+        document.location.href.split("#").length == 1 ||
+        !x.includes(document.location.href.split("#")[1])
+      ) {
+        document.location.href = document.location.href.split("#")[0] + "#";
+      } else {
+        if (this.token === "") {
+          document.location.href = document.location.href.split("#")[0] + "#";
+        } else {
+          this.content = document.location.href.split("#")[1];
+        }
+      }
+    })();
   },
 };
 </script>
@@ -106,7 +123,8 @@ export default {
 body,
 html,
 #app {
-  overflow-x: visible;
+  overflow-x: hidden;
+  overflow-y: hidden;
   width: 100%;
   height: 100%;
   margin: 0px;
@@ -123,6 +141,29 @@ html,
   font-size: 20px;
   -webkit-user-select: none;
   cursor: pointer;
+  animation-name: languagea2;
+  animation-duration: 0.4s;
+}
+@keyframes languagea2 {
+  0% {
+    font-size: 30px;
+  }
+  100% {
+    font-size: 20px;
+  }
+}
+@keyframes languagea {
+  0% {
+    font-size: 20px;
+  }
+  100% {
+    font-size: 30px;
+  }
+}
+#language:hover {
+  font-size: 30px;
+  animation-name: languagea;
+  animation-duration: 0.4s;
 }
 #title {
   font-size: 30px;
@@ -165,14 +206,6 @@ html,
   background-image: url("./assets/wallpaper.jpg");
   background-repeat: no-repeat;
   background-size: 100% 100%;
-}
-.end {
-  position: absolute;
-  bottom: 0px;
-  height: 70px;
-  width: 100%;
-  background-color: rgb(43, 42, 42);
-  text-align: center;
 }
 @media only screen and (max-width: 630px) {
   .option {
